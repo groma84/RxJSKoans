@@ -1,166 +1,196 @@
-import { Observable, Subject } from 'rxjs/Rx'
-import Range from '../util/range'
+import { Observable, Subject } from "rxjs/Rx";
+import Range from "../util/range";
 
-QUnit.module('Observable Streams')
+QUnit.module("Observable Streams");
 
-const __ = 'Fill in the blank'
+const __ = "Fill in the blank";
 
-test('simple subscription', () => {
-  Observable.of(42).subscribe(x => { equal(x, __) })
-})
+test("simple subscription", () => {
+  Observable.of(42).subscribe(x => {
+    equal(x, 42);
+  });
+});
 
-test('what comes in goes out', () => {
-  Observable.of(__).subscribe(x => { equal(x, 101) })
-})
+test("what comes in goes out", () => {
+  Observable.of(101).subscribe(x => {
+    equal(x, 101);
+  });
+});
 
 // Which interface Rx apply? (hint: what does "of()" return)
-test('this is the same as an event stream', () => {
-  const events = new Subject()
-  events.subscribe(x => { equal(__, x) })
-  events.next(37)
-})
+test("this is the same as an event stream", () => {
+  const events = new Subject();
+  events.subscribe(x => {
+    equal(37, x);
+  });
+  events.next(37);
+});
 
 // What is the relationship between "this is the same as an event stream" and "simple subscription"?
-test('how event streams relate to observables', () => {
-  let observableResult = 1
-  Observable.of(73).subscribe(x => { observableResult = x })
+test("how event streams relate to observables", () => {
+  let observableResult = 1;
+  Observable.of(73).subscribe(x => {
+    observableResult = x;
+  });
 
-  let eventStreamResult = 1
-  const events = new Subject()
-  events.subscribe(x => { eventStreamResult = x })
-  events.__(73)
+  let eventStreamResult = 1;
+  const events = new Subject();
+  events.subscribe(x => {
+    eventStreamResult = x;
+  });
+  events.next(73);
 
-  equal(observableResult, eventStreamResult)
-})
-
-// What does Observable.of() map to for a Subject?
-test('event streams have multiple results', () => {
-  let eventStreamResult = 0
-  const events = new Subject()
-  events.subscribe(x => { eventStreamResult += x })
-
-  events.next(10)
-  events.next(7)
-
-  equal(__, eventStreamResult)
-})
+  equal(observableResult, eventStreamResult);
+});
 
 // What does Observable.of() map to for a Subject?
-test('simple return', () => {
-  let received = ''
-  Observable.of('foo').subscribe(x => { received = x })
+test("event streams have multiple results", () => {
+  let eventStreamResult = 0;
+  const events = new Subject();
+  events.subscribe(x => {
+    eventStreamResult += x;
+  });
 
-  equal(__, received)
-})
+  events.next(10);
+  events.next(7);
 
-test('the last event', () => {
-  let received = ''
-  const names = ['foo', 'bar']
-  Observable.from(names).subscribe(x => { received = x })
+  equal(17, eventStreamResult);
+});
 
-  equal(__, received)
-})
+// What does Observable.of() map to for a Subject?
+test("simple return", () => {
+  let received = "";
+  Observable.of("foo").subscribe(x => {
+    received = x;
+  });
 
-test('everything counts', () => {
-  let received = 0
-  const numbers = [3, 4]
-  Observable.from(numbers).subscribe(x => { received += x })
+  equal("foo", received);
+});
 
-  equal(__, received)
-})
+test("the last event", () => {
+  let received = "";
+  const names = ["foo", "bar"];
+  Observable.from(names).subscribe(x => {
+    received = x;
+  });
 
-test('this is still an event stream', () => {
-  let received = 0
-  const numbers = new Subject()
-  numbers.subscribe(x => { received += x })
+  equal("bar", received);
+});
 
-  numbers.next(10)
-  numbers.next(5)
+test("everything counts", () => {
+  let received = 0;
+  const numbers = [3, 4];
+  Observable.from(numbers).subscribe(x => {
+    received += x;
+  });
 
-  equal(__, received)
-})
+  equal(7, received);
+});
 
-test('all events will be received', () => {
-  let received = 'Working '
-  const numbers = Range.create(9, 5)
+test("this is still an event stream", () => {
+  let received = 0;
+  const numbers = new Subject();
+  numbers.subscribe(x => {
+    received += x;
+  });
 
-  Observable.from(numbers).subscribe(x => { received += x })
+  numbers.next(10);
+  numbers.next(5);
 
-  equal(__, received)
-})
+  equal(15, received);
+});
 
-test('do things in the middle', () => {
-  const status = []
-  const daysTilTest = Observable.from(Range.create(4, 1))
+test("all events will be received", () => {
+  let received = "Working ";
+  const numbers = Range.create(9, 5);
+
+  Observable.from(numbers).subscribe(x => {
+    received += x;
+  });
+
+  equal("Working 98765", received);
+});
+
+test("do things in the middle", () => {
+  const status = [];
+  const daysTilTest = Observable.from(Range.create(4, 1));
 
   daysTilTest
-    .do(d => { status.push(d + '=' + (d === 1 ? 'Study Like Mad' : __)) })
-    .subscribe()
+    .do(d => {
+      status.push(d + "=" + (d === 1 ? "Study Like Mad" : "Party"));
+    })
+    .subscribe();
 
-  equal('4=Party,3=Party,2=Party,1=Study Like Mad', status.toString())
-})
+  equal("4=Party,3=Party,2=Party,1=Study Like Mad", status.toString());
+});
 
-test('nothing listens until you subscribe', () => {
-  let sum = 0
-  const numbers = Observable.from(Range.create(1, 10))
-  const observable = numbers.do(n => { sum += n })
+test("nothing listens until you subscribe", () => {
+  let sum = 0;
+  const numbers = Observable.from(Range.create(1, 10));
+  const observable = numbers.do(n => {
+    sum += n;
+  });
 
-  equal(0, sum)
-  observable.__()
+  equal(0, sum);
+  observable.subscribe();
 
-  equal(1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10, sum)
-})
+  equal(1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10, sum);
+});
 
-test('events before you subscribe do not count', () => {
-  let sum = 0
-  const numbers = new Subject()
-  const observable = numbers.do(n => { sum += n })
+test("events before you subscribe do not count", () => {
+  let sum = 0;
+  const numbers = new Subject();
+  const observable = numbers.do(n => {
+    sum += n;
+  });
 
-  numbers.next(1)
-  numbers.next(2)
+  numbers.next(1);
+  numbers.next(2);
 
-  observable.subscribe()
+  observable.subscribe();
 
-  numbers.next(3)
-  numbers.next(4)
+  numbers.next(3);
+  numbers.next(4);
 
-  equal(__, sum)
-})
+  equal(3 + 4, sum);
+});
 
-test('events after you unsubscribe do not count', () => {
-  let sum = 0
-  const numbers = new Subject()
-  const observable = numbers.do(n => { sum += n })
-  const subscription = observable.subscribe()
+test("events after you unsubscribe do not count", () => {
+  let sum = 0;
+  const numbers = new Subject();
+  const observable = numbers.do(n => {
+    sum += n;
+  });
+  const subscription = observable.subscribe();
 
-  numbers.next(1)
-  numbers.next(2)
+  numbers.next(1);
+  numbers.next(2);
 
-  subscription.unsubscribe()
+  subscription.unsubscribe();
 
-  numbers.next(3)
-  numbers.next(4)
+  numbers.next(3);
+  numbers.next(4);
 
-  equal(__, sum)
-})
+  equal(1 + 2, sum);
+});
 
-test('events while subscribing', () => {
-  const received = []
-  const words = new Subject()
-  const observable = words.do(::received.push)
+test("events while subscribing", () => {
+  const received = [];
+  const words = new Subject();
+  const observable = words.do(w => received.push(w));
 
-  words.next('Peter')
-  words.next('said')
+  words.next("Peter");
+  words.next("said");
 
-  const subscription = observable.subscribe()
+  const subscription = observable.subscribe();
 
-  words.next('you')
-  words.next('look')
-  words.next('pretty')
+  words.next("you");
+  words.next("look");
+  words.next("pretty");
 
-  subscription.unsubscribe()
+  subscription.unsubscribe();
 
-  words.next('ugly')
+  words.next("ugly");
 
-  equal(__, received.join(' '))
-})
+  equal("you look pretty", received.join(" "));
+});
