@@ -1,4 +1,4 @@
-# Learn the Reactive Extensions for JavaScript (RxJS) with RxJS Koans #
+# Forked to work through them: Learn the Reactive Extensions for JavaScript (RxJS) with RxJS Koans
 
 The Koans walk you along the path to enlightenment in order to learn [RxJS](https://github.com/Reactive-Extensions/RxJS). The goal is to learn the RxJS library. We also teach you culture. Testing is not just something we pay lip service to, but something we live. It is essential in your quest to learn and do great things in the library.
 
