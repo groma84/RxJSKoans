@@ -1,33 +1,28 @@
-import { Observable } from 'rxjs/Rx'
+import { Observable } from "rxjs/Rx";
 
-QUnit.module('Imperative')
+QUnit.module("Imperative");
 
-const __ = 'Fill in the blank'
+const __ = "Fill in the blank";
 
-test('can make a decision with an if with no else', () => {
-  const results = []
+test("can make a decision with an if with no else", () => {
+  const results = [];
   Observable.range(1, 10)
-    .flatMap(x => Observable.if(
-      () => x % 2 === 0,
-      Observable.of(x)
-    ))
-    .subscribe(::results.push)
+    .flatMap(x => Observable.if(() => x % 2 === 0, Observable.of(x)))
+    .subscribe(::results.push);
 
-  equal(__, results.join(''))
-})
+  equal("246810", results.join(""));
+});
 
-test('can make a decision with an if with an else', () => {
-  const results = []
+test("can make a decision with an if with an else", () => {
+  const results = [];
   Observable.range(1, 5)
-    .flatMap((x, i) => Observable.if(
-      () => x % 2 === 0,
-      Observable.of(x),
-      Observable.range(x, i)
-    ))
-    .subscribe(::results.push)
+    .flatMap((x, i) =>
+      Observable.if(() => x % 2 === 0, Observable.of(x), Observable.range(x, i))
+    )
+    .subscribe(::results.push);
 
-  equal(__, results.join(''))
-})
+  equal("23445678", results.join(""));
+});
 
 // XXX `case` not yet implemented
 // test('we can make test cases', () => {
